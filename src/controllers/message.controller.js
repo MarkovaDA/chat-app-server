@@ -2,7 +2,7 @@ var MessageModel = require('./../schemas/message');
 
 class MessageController {
   // get messages by dialogId
-  get(req, res) {
+  getMessageListByDialogId(req, res) {
     var dialogId = req.params.id;
 
     MessageModel

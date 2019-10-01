@@ -1,8 +1,9 @@
 var UserModel = require('./../schemas/user');
 
 class UserController { 
-    get(req, res) {
+    getUserById(req, res) {
         var id = req.params.id;
+
         UserModel.findById(id, (err, user) => {
             if (err) {
                 return res.status(404).json({
@@ -17,11 +18,13 @@ class UserController {
     create(req, res) {
         var user = new UserModel(req.body);
         
-        user.save().then((obj) => {
-            res.json(obj);
-        }).catch((err) => {
-            res.json(err);
-        });        
+        user.save((err, user) => {
+            if (err) {
+                return res.status(400).json(err)
+            }
+
+            res.status(200).json(user)
+        });     
     }
 
     delete(req, res) {
