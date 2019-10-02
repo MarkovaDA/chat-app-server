@@ -25,8 +25,12 @@ class HttpController {
     })
   }
 
-  handleNotFound(response) {
-    response.status(404).json({ message: `Not found` });
+  handleNotFound(res, message = 'Not found') {
+    res.status(404).json({ message });
+  }
+
+  handleUnauthorized(res) {
+    res.status(401).json({message: 'Access forbidden'})
   }
 }
 
