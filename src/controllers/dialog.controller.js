@@ -1,17 +1,16 @@
+var HttpController = require('./../controllers/http.controller');
 var DialogModel = require('./../schemas/dialog');
 
-class DialogController {
-  get(req, res) {
+class DialogController extends HttpController {
+  getDialogListByAuthorId(req, res) {
     var authorId = req.params.id;
 
     DialogModel
       .find({author: authorId})
-      .populate(['author', 'partner'])
+      .populate(['author', 'partner', 'lastMessage'])
       .exec((err, list) => {
         if (err) {
-            return res.status(404).json({
-                message: `Not found`
-            });
+            return super.handleNotFound()
         }
 
         res.status(200).json(list);
@@ -19,35 +18,12 @@ class DialogController {
   }
 
   create(req, res) {
-    var dialog = new DialogModel({
-      author: req.body.author,
-      partner: req.body.partner,
-      lastMessage: req.body.messageId
-    });
-
-    dialog.save((err, item) => {
-      if (err) {
-        return res.status(400).json(err)
-      }
-
-      res.status(201).json(item)
-    });
+    super.createModel(req, res, DialogModel);
   }
 
   delete(req, res) {
-    DialogModel.findOneAndDelete({_id: req.params.id}, (err, dialog) => {
-        if (err) {
-          return res.status(404).json({message: `Not found`})
-        } 
-
-        if (!user) {
-            res.status(404).json({message: `Not found`})
-        } else {
-            res.status(204).json(dialog)
-        }
-    })
+    super.deleteModel(req, res, DialogModel);
   }
-
 }
 
 module.exports = new DialogController();

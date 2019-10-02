@@ -1,15 +1,33 @@
-class HttpHandlers {
-  handleNotFound(res) {
-    return res.status(404).json({message: `Not found`})
+class HttpController {
+  createModel(req, res, model) {
+    var item = new model(req.body);
+        
+    item.save((err, item) => {
+        if (err) {
+            return res.status(400).json(err)
+        }
+
+        res.status(200).json(item)
+     });   
   }
 
-  handleDeleteSuccess(res) {
+  deleteModel(req, res, model) {
+    model.findOneAndDelete({_id: req.params.id}, (err, item) => {
+      if (err) {
+        return handleNotFound(res);
+      } 
 
+      if (!user) {
+        handleNotFound(res);
+      } else {
+          res.status(204).json(item)
+      }
+    })
   }
 
-  handleCreateSuccess(res) {
-
+  handleNotFound(response) {
+    response.status(404).json({ message: `Not found` });
   }
 }
 
-module.exports = new HttpHandlers();
+module.exports = HttpController;

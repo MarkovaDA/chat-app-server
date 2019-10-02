@@ -1,14 +1,12 @@
 var UserModel = require('./../schemas/user');
-
-class UserController { 
+var HttpController = require('./../controllers/http.controller'); 
+class UserController extends HttpController { 
     getUserById(req, res) {
         var id = req.params.id;
 
         UserModel.findById(id, (err, user) => {
             if (err) {
-                return res.status(404).json({
-                    message: `Not found`
-                });
+                return super.handleNotFound()
             }
 
             res.json(user);
@@ -16,29 +14,11 @@ class UserController {
     }
 
     create(req, res) {
-        var user = new UserModel(req.body);
-        
-        user.save((err, user) => {
-            if (err) {
-                return res.status(400).json(err)
-            }
-
-            res.status(200).json(user)
-        });     
+        super.createModel(req, res, UserModel);     
     }
 
     delete(req, res) {
-        UserModel.findOneAndDelete({_id: req.params.id}, (err, user) => {
-            if (err) {
-              return res.status(404).json({message: `Not found`})
-            } 
-
-            if (!user) {
-                res.status(404).json({message: `Not found`})
-            } else {
-                res.status(204).json(user)
-            }
-        })
+        super.deleteModel(req, res, UserModel);
     }
 }
 

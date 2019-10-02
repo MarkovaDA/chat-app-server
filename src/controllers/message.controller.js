@@ -1,7 +1,10 @@
+var HttpController = require('./../controllers/http.controller');
 var MessageModel = require('./../schemas/message');
+var DialogModel = require('./../schemas/dialog');
+var mongoose = require('mongoose');
+var ObjectId = mongoose.Types.ObjectId;
+class MessageController extends HttpController {
 
-class MessageController {
-  // get messages by dialogId
   getMessageListByDialogId(req, res) {
     var dialogId = req.params.id;
 
@@ -10,9 +13,7 @@ class MessageController {
       .populate(['dialog'])
       .exec((err, messages) => {
         if (err) {
-            return res.status(404).json({
-                message: `Not found`
-            });
+            return super.handleNotFound()
         }
 
         res.status(200).json(messages);
@@ -26,7 +27,7 @@ class MessageController {
       text: text,
       unread: unread,
       dialog: dialogId,
-      user: userId  // how wrote the message
+      user: userId
     });
 
     message.save((err, message) => {
@@ -34,8 +35,20 @@ class MessageController {
         return res.status(400).json(err)
       }
 
-      res.status(201).json(message)
+      DialogModel.updateOne(
+        { '_id': dialogId },
+        { $set: { lastMessage: new ObjectId(message._id) }}, 
+        (err, _) => {
+          if (err) {
+            return res.status(400).json(err)
+          }
+          res.status(201).json(message)
+        })
     });
+  }
+
+  delete(req, res) {
+    super.deleteModel(req, res, MessageModel);
   }
 }
 
