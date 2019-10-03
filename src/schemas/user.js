@@ -1,10 +1,12 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+//  TODO: validate using express-validate module
 var userSchema = new Schema({
   username: {
     type: String,
-    required: 'Username is required'
+    required: 'Username is required',
+    unique: true
   },
   firstname: {
     type: String,
@@ -15,7 +17,15 @@ var userSchema = new Schema({
     required: 'Lastname is required'
   },
   email: String,
-  password: String,
+  password: {
+    type: String
+    // validate: {
+    //   validator: (val) => {
+    //     return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!_$%@#£€*?&]{8,}$/.test(val)
+    //   },
+    //   message: 'Password is not valid'
+    // }
+  },
   confirmed_password: String,
   last_seen: Date
 }, {

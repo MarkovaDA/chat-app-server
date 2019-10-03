@@ -10,7 +10,9 @@ var messageController = require('./controllers/message.controller');
 dotenv.config();
 
 var app = express();
+var mongoSanitize = require('express-mongo-sanitize');
 var authMiddleware = require('./middleware/user.authorized');
+var lastseenMiddleware = require('./middleware/user.lastseen');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useCreateIndex', true);
@@ -25,16 +27,19 @@ mongoose.connect('mongodb://localhost:27017/chat',
 
 app.use(parser.json());
 app.use(parser.urlencoded({ extended: true }));
+app.use(mongoSanitize());
 app.use(authMiddleware);
+app.use(lastseenMiddleware);
 
 app.get('/', (_, res) => {
   res.send('Hello world!');
 });
 
 app.get('/user/:id', userController.getUserById);
+
 app.post('/user/register', userController.register);
-app.delete('/user/delete/:id', userController.delete);
 app.post('/user/login', userController.login);
+app.delete('/user/delete/:id', userController.delete);
 
 app.get('/dialog/:id', dialogController.getDialogListByAuthorId);
 app.post('/dialog/create', dialogController.create);

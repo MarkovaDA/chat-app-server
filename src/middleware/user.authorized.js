@@ -1,14 +1,13 @@
 const verifyToken = require('../utils/verify.jwt.token');
 
 module.exports = (req, res, next) => {
-  // temporary decision
+  // temporary decision TODO: fix that
   if (req.path === '/user/login' || req.path === '/user/register' ) {
     next()
     return;
   }
-  
-  verifyToken(req.headers.token).then((user) => {
-    req.user = user;
+  verifyToken(req.headers.token).then((auth) => {
+    req.authData = auth.data
     next()
   }).catch(() => {
     res.status(403).json({
