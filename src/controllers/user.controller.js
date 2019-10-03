@@ -1,6 +1,7 @@
 var UserModel = require('./../schemas/user');
 var HttpController = require('./../controllers/http.controller'); 
-var createJWTToken = require('./../utils/createJWTToken');
+var createJWTToken = require('../utils/create.jwt.token');
+var encrypt = require('./../utils/encrypt');
 
 class UserController extends HttpController { 
     getUserById(req, res) {
@@ -16,7 +17,6 @@ class UserController extends HttpController {
     }
 
     login(req, res) {
-        //TODO: save cashed passwords
         const { username, password } = req.body;
 
         UserModel.findOne({username}, (err, user) => {
@@ -24,7 +24,7 @@ class UserController extends HttpController {
                 return super.handleNotFound(res, 'User not found');
             }
 
-            if (user.password === password) {
+            if (encrypt.validPassword(password, user.password)) {
                 const token = createJWTToken({ username, password});
                 res.status(200).json({token}) 
             } else {
@@ -33,7 +33,9 @@ class UserController extends HttpController {
         })
     }
 
-    create(req, res) {
+    register(req, res) {
+        const password = req.body.password;
+        req.body.password = encrypt.generateHash(password);
         super.createModel(req, res, UserModel);     
     }
 

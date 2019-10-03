@@ -1,12 +1,13 @@
-const verifyToken = require('./../utils/verifyJWTToken');
+const verifyToken = require('../utils/verify.jwt.token');
 
 module.exports = (req, res, next) => {
-  if (req.path === '/user/login') {
+  // temporary decision
+  if (req.path === '/user/login' || req.path === '/user/register' ) {
     next()
     return;
   }
-
-  verifyToken(token).then((user) => {
+  
+  verifyToken(req.headers.token).then((user) => {
     req.user = user;
     next()
   }).catch(() => {

@@ -32,7 +32,7 @@ app.get('/', (_, res) => {
 });
 
 app.get('/user/:id', userController.getUserById);
-app.post('/user/create', userController.create);
+app.post('/user/register', userController.register);
 app.delete('/user/delete/:id', userController.delete);
 app.post('/user/login', userController.login);
 
@@ -46,4 +46,3 @@ app.post('/message/create', messageController.create);
 app.listen(process.env.port, () => {
   console.log(`Example app listening on port ${process.env.port}`);
 });
-
