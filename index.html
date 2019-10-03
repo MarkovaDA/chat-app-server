@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+    <script>
+        var io = io('http://localhost:3005');
+        io.on('connection', (socket) => {
+            socket.on('qwe', (msg) => {
+                console.log('MESSAGE FROM SOCKET', msg);
+            })
+        })
+    </script>
+</body>
+</html>

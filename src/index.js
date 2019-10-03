@@ -10,6 +10,14 @@ var messageController = require('./controllers/message.controller');
 dotenv.config();
 
 var app = express();
+var http = require('http').createServer(app);
+var socket = require('socket.io')(http);
+
+socket.on('connection', (socket) => {
+  console.log('USER CONNECTED', socket);
+  socket.emit('qwe', 'HELLO FROM SOCKET');
+});
+
 var mongoSanitize = require('express-mongo-sanitize');
 var authMiddleware = require('./middleware/user.authorized');
 var lastseenMiddleware = require('./middleware/user.lastseen');
@@ -48,6 +56,6 @@ app.delete('/dialog/:id', dialogController.delete);
 app.get('/message?dialog=:id', messageController.getMessageListByDialogId);
 app.post('/message/create', messageController.create);
 
-app.listen(process.env.port, () => {
+http.listen(process.env.port, () => {
   console.log(`Example app listening on port ${process.env.port}`);
 });
