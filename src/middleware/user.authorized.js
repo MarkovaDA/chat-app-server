@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
     return;
   }
   verifyToken(req.headers.token).then((auth) => {
-    req.authData = auth.data
+    req.authData = auth.data;
     next()
   }).catch(() => {
     res.status(403).json({

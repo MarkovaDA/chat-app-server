@@ -40,6 +40,7 @@ class UserController extends HttpController {
     }
 
     delete(req, res) {
+        req.params.id = req.activeUser._id;
         super.deleteModel(req, res, UserModel);
     }
 }

@@ -41,7 +41,7 @@ app.post('/user/register', userController.register);
 app.post('/user/login', userController.login);
 app.delete('/user/delete/:id', userController.delete);
 
-app.get('/dialog/:id', dialogController.getDialogListByAuthorId);
+app.get('/dialogs', dialogController.getDialogList);
 app.post('/dialog/create', dialogController.create);
 app.delete('/dialog/:id', dialogController.delete);
 

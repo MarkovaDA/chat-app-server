@@ -2,8 +2,9 @@ var HttpController = require('./../controllers/http.controller');
 var DialogModel = require('./../schemas/dialog');
 
 class DialogController extends HttpController {
-  getDialogListByAuthorId(req, res) {
-    var authorId = req.params.id;
+  //authorized user dialog list
+  getDialogList(req, res) {
+    var authorId = req.activeUser._id;
 
     DialogModel
       .find({author: authorId})
@@ -18,6 +19,7 @@ class DialogController extends HttpController {
   }
 
   create(req, res) {
+    req.body.author = req.activeUser._id;
     super.createModel(req, res, DialogModel);
   }
 
