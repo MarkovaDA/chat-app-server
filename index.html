@@ -6,12 +6,14 @@
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
     <script>
-        var io = io('http://localhost:3005');
-        io.on('connection', (socket) => {
-            socket.on('qwe', (msg) => {
-                console.log('MESSAGE FROM SOCKET', msg);
+        window.onload = function() {
+            var socket = io('http://localhost:3005');
+            var me = '5d95ed72ec68181db4045a7d';
+            
+            socket.on(`NEW:MESSAGE_to${me}`, (message) => {
+                console.log('NEW:MESSAGE', message);
             })
-        })
+        }
     </script>
 </body>
 </html>

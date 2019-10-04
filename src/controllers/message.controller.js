@@ -2,8 +2,16 @@ var HttpController = require('./../controllers/http.controller');
 var MessageModel = require('./../schemas/message');
 var DialogModel = require('./../schemas/dialog');
 var mongoose = require('mongoose');
+var omit = require('lodash/omit');
+
 var ObjectId = mongoose.Types.ObjectId;
 class MessageController extends HttpController {
+  constructor(socket) {
+    super();
+
+    this.socket = socket;
+    this.create = this.create.bind(this);
+  }
 
   getMessageListByDialogId(req, res) {
     var dialogId = req.params.id;
@@ -13,7 +21,7 @@ class MessageController extends HttpController {
       .populate(['dialog'])
       .exec((err, messages) => {
         if (err) {
-            return super.handleNotFound()
+            return super.handleNotFound(res)
         }
 
         res.status(200).json(messages);
@@ -21,13 +29,13 @@ class MessageController extends HttpController {
   }
 
   create(req, res) {
-    const { text, unread, dialogId, userId } = req.body;
+    const { text, unread, dialog, user } = req.body;
 
     var message = new MessageModel({
       text: text,
       unread: unread,
-      dialog: dialogId,
-      user: userId
+      dialog: dialog,
+      user: new ObjectId(user)
     });
 
     message.save((err, message) => {
@@ -35,13 +43,20 @@ class MessageController extends HttpController {
         return res.status(400).json(err)
       }
 
+      MessageModel.populate(message, ['user', 'dialog'])
+        .then(doc => {
+          this.socket.emit(`NEW:MESSAGE_to${doc.dialog.author}`, omit(doc, 'user.password'))
+        })
+        .catch(() => {})
+
       DialogModel.updateOne(
-        { '_id': dialogId },
+        { '_id': dialog },
         { $set: { lastMessage: new ObjectId(message._id) }}, 
         (err, _) => {
           if (err) {
             return res.status(400).json(err)
           }
+
           res.status(201).json(message)
         })
     });
@@ -52,4 +67,4 @@ class MessageController extends HttpController {
   }
 }
 
-module.exports = new MessageController();
+module.exports = MessageController;

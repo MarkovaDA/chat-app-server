@@ -2,6 +2,10 @@ var HttpController = require('./../controllers/http.controller');
 var DialogModel = require('./../schemas/dialog');
 
 class DialogController extends HttpController {
+  constructor(socket) {
+    super();
+    this.socket = socket;
+  }
   //authorized user dialog list
   getDialogList(req, res) {
     var authorId = req.activeUser._id;
@@ -28,4 +32,4 @@ class DialogController extends HttpController {
   }
 }
 
-module.exports = new DialogController();
+module.exports = DialogController;

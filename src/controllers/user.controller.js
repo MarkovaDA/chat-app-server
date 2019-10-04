@@ -3,7 +3,12 @@ var HttpController = require('./../controllers/http.controller');
 var createJWTToken = require('../utils/create.jwt.token');
 var encrypt = require('./../utils/encrypt');
 
-class UserController extends HttpController { 
+class UserController extends HttpController {
+    constructor(socket) {
+        super();
+        this.socket = socket;
+    }
+
     getUserById(req, res) {
         var id = req.params.id;
 
@@ -45,4 +50,4 @@ class UserController extends HttpController {
     }
 }
 
-module.exports = new UserController();
+module.exports = UserController;
