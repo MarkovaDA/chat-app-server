@@ -9,12 +9,22 @@ class UserController extends HttpController {
         this.socket = socket;
     }
 
+    getUsers(req, res) {
+        UserModel.find({}, (err, list) => {
+            if (err) {
+                return super.notFound()
+            }
+            //TODO: cut out password
+            res.json(list)
+        })
+    }
+
     getUserById(req, res) {
         var id = req.params.id;
 
         UserModel.findById(id, (err, user) => {
             if (err) {
-                return super.handleNotFound()
+                return super.notFound()
             }
 
             res.json(user);
@@ -26,16 +36,20 @@ class UserController extends HttpController {
 
         UserModel.findOne({username}, (err, user) => {
             if (err || !user) {
-                return super.handleNotFound(res, 'User not found');
+                return super.notFound(res, 'User not found');
             }
 
             if (encrypt.validPassword(password, user.password)) {
                 const token = createJWTToken({ username, password});
                 res.status(200).json({token}) 
             } else {
-                super.handleUnauthorized(res)
+                super.unAuthorized(res)
             }
         })
+    }
+
+    logout() {
+
     }
 
     register(req, res) {

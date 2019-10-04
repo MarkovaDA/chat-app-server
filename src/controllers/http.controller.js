@@ -20,16 +20,16 @@ class HttpController {
       if (!user) {
         handleNotFound(res);
       } else {
-          res.status(204).json(item)
+        res.status(204).json(item)
       }
     })
   }
 
-  handleNotFound(res, message = 'Not found') {
+  notFound(res, message = 'Not found') {
     res.status(404).json({ message });
   }
 
-  handleUnauthorized(res) {
+  unAuthorized(res) {
     res.status(401).json({message: 'Access forbidden'})
   }
 }

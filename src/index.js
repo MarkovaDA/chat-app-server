@@ -14,6 +14,7 @@ var lastseenMiddleware = require('./middleware/user.lastseen');
 
 createMongoose();
 
+
 socket.on('connection', (socket) => {
   console.log('SOCKET CONNECTED')
 });

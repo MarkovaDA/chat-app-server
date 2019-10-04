@@ -12,7 +12,11 @@
             
             socket.on(`NEW:MESSAGE_to${me}`, (message) => {
                 console.log('NEW:MESSAGE', message);
-            })
+            });
+
+            socket.on(`NEW:DIALOG_to${me}`, (dialog) => {
+                console.log(`User ${dialog.author} created dialog with you`, dialog);
+            });
         }
     </script>
 </body>

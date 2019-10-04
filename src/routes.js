@@ -12,7 +12,7 @@ module.exports = (app, socket) => {
   });
   
   app.get('/user/:id', userController.getUserById);
-  
+  app.get('/users', userController.getUsers);
   app.post('/user/register', userController.register);
   app.post('/user/login', userController.login);
   app.delete('/user/delete/:id', userController.delete);

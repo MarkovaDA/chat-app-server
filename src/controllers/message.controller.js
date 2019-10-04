@@ -3,8 +3,8 @@ var MessageModel = require('./../schemas/message');
 var DialogModel = require('./../schemas/dialog');
 var mongoose = require('mongoose');
 var omit = require('lodash/omit');
-
 var ObjectId = mongoose.Types.ObjectId;
+
 class MessageController extends HttpController {
   constructor(socket) {
     super();
@@ -21,7 +21,7 @@ class MessageController extends HttpController {
       .populate(['dialog'])
       .exec((err, messages) => {
         if (err) {
-            return super.handleNotFound(res)
+            return super.notFound(res)
         }
 
         res.status(200).json(messages);
@@ -45,7 +45,8 @@ class MessageController extends HttpController {
 
       MessageModel.populate(message, ['user', 'dialog'])
         .then(doc => {
-          this.socket.emit(`NEW:MESSAGE_to${doc.dialog.author}`, omit(doc, 'user.password'))
+          const notifiedUser = message.user === doc.dialog.author ? doc.dialog.partner : doc.dialog.author;
+          this.socket.emit(`NEW:MESSAGE_to${notifiedUser}`, omit(doc, 'user.password'))
         })
         .catch(() => {})
 
