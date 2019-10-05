@@ -1,4 +1,5 @@
 var UserModel = require('./../schemas/user');
+var SessionModel = require('./../schemas/session');
 var HttpController = require('./../controllers/http.controller'); 
 var createJWTToken = require('../utils/create.jwt.token');
 var encrypt = require('./../utils/encrypt');
@@ -7,15 +8,16 @@ class UserController extends HttpController {
     constructor(socket) {
         super();
         this.socket = socket;
+        this.getUsers = this.getUsers.bind(this);
     }
 
     getUsers(req, res) {
-        UserModel.find({}, (err, list) => {
+        UserModel.find({}, '-password, -last_seen', (err, list) => {
             if (err) {
                 return super.notFound()
             }
-            //TODO: cut out password
-            res.json(list)
+
+            res.json(list);
         })
     }
 
@@ -41,15 +43,31 @@ class UserController extends HttpController {
 
             if (encrypt.validPassword(password, user.password)) {
                 const token = createJWTToken({ username, password});
-                res.status(200).json({token}) 
+
+                SessionModel.findOneAndUpdate({
+                    userId: user._id
+                }, {token: token}, {upsert: true}).then(() => {
+                    res.status(200).json({token});
+                }).catch((err) => {
+                    console.log(err);
+                    res.status(500).json({message: 'Error during session creation'})
+                })
             } else {
                 super.unAuthorized(res)
             }
         })
     }
 
-    logout() {
+    logout(req, res) {
+        SessionModel
+            .findOneAndDelete({token: req.headers.token}, 
+                (err, data) => {
+                    if (err) {
+                        return res.status(500).json(err);
+                    }
 
+                    res.status(200).json(data);
+            });
     }
 
     register(req, res) {

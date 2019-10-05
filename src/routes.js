@@ -15,6 +15,7 @@ module.exports = (app, socket) => {
   app.get('/users', userController.getUsers);
   app.post('/user/register', userController.register);
   app.post('/user/login', userController.login);
+  app.post('/user/logout', userController.logout)
   app.delete('/user/delete/:id', userController.delete);
   
   app.get('/dialogs', dialogController.getDialogList);

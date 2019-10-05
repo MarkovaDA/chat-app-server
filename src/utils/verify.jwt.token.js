@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const sessionModel = require('./../schemas/session');
 
 const verify = token => new Promise((resolve, reject) => {
   jwt.verify(token, process.env.JWT_TOKEN, (err, decodedUser) => {
@@ -6,7 +7,13 @@ const verify = token => new Promise((resolve, reject) => {
       return reject(err);
     }
 
-    resolve(decodedUser);
+    sessionModel.findOne({token}, (err, data) => {
+      if (err || !data) {
+        return reject(err);
+      }
+
+      resolve(decodedUser);
+    })
   });
 })
 
