@@ -7,6 +7,7 @@ var createMongoose = require('./db.connect');
 var app = express();
 var http = require('http').createServer(app);
 var socket = require('socket.io')(http);
+var cors = require('cors');
 
 var mongoSanitize = require('express-mongo-sanitize');
 var authMiddleware = require('./middleware/user.authorized');
@@ -20,6 +21,7 @@ socket.on('connection', (socket) => {
 });
 
 dotenv.config();
+app.use(cors());
 app.use(parser.json());
 app.use(parser.urlencoded({ extended: true }));
 app.use(mongoSanitize());

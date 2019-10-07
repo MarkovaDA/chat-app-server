@@ -40,16 +40,14 @@ class UserController extends HttpController {
             if (err || !user) {
                 return super.notFound(res, 'User not found');
             }
-
             if (encrypt.validPassword(password, user.password)) {
                 const token = createJWTToken({ username, password});
 
                 SessionModel.findOneAndUpdate({
                     userId: user._id
-                }, {token: token}, {upsert: true}).then(() => {
+                }, {token}, {upsert: true}).then(() => {
                     res.status(200).json({token});
                 }).catch((err) => {
-                    console.log(err);
                     res.status(500).json({message: 'Error during session creation'})
                 })
             } else {
