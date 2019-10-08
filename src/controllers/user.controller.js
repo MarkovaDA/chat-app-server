@@ -11,6 +11,10 @@ class UserController extends HttpController {
         this.getUsers = this.getUsers.bind(this);
     }
 
+    getUserByToken(req, res) {
+        res.status(200).json(req.activeUser);
+    }
+
     getUsers(req, res) {
         UserModel.find({}, '-password, -last_seen', (err, list) => {
             if (err) {
